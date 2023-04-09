@@ -501,14 +501,18 @@ if __name__ == '__main__':
     if (screen_resolution == (1920, 1080)):
         # Change to Remote Mode
         ChangeTo1Monitors()
+        time.sleep(1)
         changeScale(150)
+        time.sleep(1)
         change_resolution(1680, 1050)
         Sound.volume_set(0)
 
     else:
         # Change to Desktop Mode
         ChangeToExtendMonitors()
+        time.sleep(1)
         changeScale(100)
+        time.sleep(1)
         change_resolution(1920, 1080)
         Sound.volume_set(15)
 
