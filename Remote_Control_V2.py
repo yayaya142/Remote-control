@@ -420,7 +420,7 @@ class Sound:
 
 def get_screen_resolution():
 	return (win32api.GetSystemMetrics(0), win32api.GetSystemMetrics(1))
-
+    # 1
 
 def change_resolution(Width, Height):
     devmode = pywintypes.DEVMODEType()
