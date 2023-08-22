@@ -10,7 +10,7 @@ import ctypes
 import subprocess
 
 
-#region sounds funcs
+# region sounds funcs
 # Import the SendInput object
 SendInput = ctypes.windll.user32.SendInput
 
@@ -414,13 +414,14 @@ class Sound:
         """
         Sound.volume_set(100)
 
-#endregion sounds funcs
+# endregion sounds funcs
 
-#region Resolution funcs
+# region Resolution funcs
+
 
 def get_screen_resolution():
-	return (win32api.GetSystemMetrics(0), win32api.GetSystemMetrics(1))
-    # 1
+    return (win32api.GetSystemMetrics(0), win32api.GetSystemMetrics(1))
+
 
 def change_resolution(Width, Height):
     devmode = pywintypes.DEVMODEType()
@@ -429,9 +430,11 @@ def change_resolution(Width, Height):
     devmode.Fields = win32con.DM_PELSWIDTH | win32con.DM_PELSHEIGHT
     win32api.ChangeDisplaySettings(devmode, 0)
 
-#endregion Resolution funcs
+# endregion Resolution funcs
 
-#region Change monitors funcs
+# region Change monitors funcs
+
+
 def findCoordinates():
     x, y = pyautogui.position()
     print(f'X: {x}, Y: {y}')
@@ -453,13 +456,14 @@ def ChangeToExtendMonitors():
     pyautogui.click(1318, 471)
 
 
-#endregion Change monitors funcs
+# endregion Change monitors funcs
 
-#region Change Scales
+# region Change Scales
 
 
 def openSettings():
     subprocess.Popen([r"C:\Windows\System32\DpiScaling.exe"])
+
 
 def closeSettings():
     windows = pyautogui.getAllWindows()
@@ -468,11 +472,13 @@ def closeSettings():
             # If the "Settings" window is open, close it
             window.close()
 
+
 def settingFullWindow():
     # Get the window with the specified title
     window = pyautogui.getWindowsWithTitle('Settings')[0]
     # Maximize the window
     window.maximize()
+
 
 def openScaleLayout():
     openSettings()
@@ -487,34 +493,122 @@ def changeScale(next_scale):
     # Use the subprocess module to run the command
     subprocess.run(filePath)
 
-#endregion Change scales
+# endregion Change scales
+
+# region toggle windows taskbar
 
 
+def enable_auto_hide_taskbar():
+    powershell_command = (
+        'powershell -command "&{$p=\'HKCU:SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\StuckRects3\';'
+        '$v=(Get-ItemProperty -Path $p).Settings;$v[8]=3;&Set-ItemProperty -Path $p -Name Settings -Value $v;'
+        '&Stop-Process -f -ProcessName explorer}"'
+    )
+
+    subprocess.run(powershell_command, shell=True,
+                   capture_output=True, text=True)
 
 
+def disable_auto_hide_taskbar():
+    powershell_command = (
+        'powershell -command "&{$p=\'HKCU:SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\StuckRects3\';'
+        '$v=(Get-ItemProperty -Path $p).Settings;$v[8]=2;&Set-ItemProperty -Path $p -Name Settings -Value $v;'
+        '&Stop-Process -f -ProcessName explorer}"'
+    )
+
+    subprocess.run(powershell_command, shell=True,
+                   capture_output=True, text=True)
+
+
+# endregion toggle windows taskbar
+
+
+# region menu navigation
+def showMenu():
+    printMenu()
+    userSelect = input()
+
+    if (userSelect == "1"):
+        # pc mode
+        pcMode()
+        return
+    if (userSelect == "2"):
+        # tablet mode
+        tabletMode()
+        return
+    if (userSelect == "3"):
+        # laptop mode
+        laptopMode()
+        return
+    if (userSelect == "4"):
+        # DPI 100%
+        changeScale(100)
+        return
+    if (userSelect == "5"):
+        # DPI 150%
+        changeScale(150)
+        return
+    if (userSelect == "6"):
+        # Resolution PC
+        change_resolution(1920, 1080)
+        return
+    if (userSelect == "7"):
+        # Resolution tablet
+        change_resolution(1680, 1050)
+        return
+    if (userSelect == "8"):
+        # Resolution laptop
+        change_resolution(1366, 768)
+        return
+
+
+def printMenu():
+    print("1) PC mode")
+    print("2) Tablet")
+    print("3) Laptop")
+    print("4) DPI 100%")
+    print("5) DPI 150%")
+    print("6) Resolution PC")
+    print("7) Resolution Tablet")
+    print("8) Resolution Laptop")
+
+
+def pcMode():
+    # Change to Desktop Mode
+    ChangeToExtendMonitors()
+    time.sleep(1)
+    changeScale(100)
+    time.sleep(1)
+    change_resolution(1920, 1080)
+    Sound.volume_set(15)
+    disable_auto_hide_taskbar()
+
+
+def tabletMode():
+    # Change to Remote Mode
+    ChangeTo1Monitors()
+    time.sleep(1)
+    changeScale(150)
+    time.sleep(1)
+    change_resolution(1680, 1050)
+    Sound.volume_set(0)
+    enable_auto_hide_taskbar()
+
+
+def laptopMode():
+ # Change to Laptop Mode
+    ChangeTo1Monitors()
+    time.sleep(1)
+    changeScale(100)
+    time.sleep(1)
+    change_resolution(1366, 768)
+    Sound.volume_set(0)
+    enable_auto_hide_taskbar()
+# endregion menu navigation
 
 
 if __name__ == '__main__':
     # get screen resolution
     screen_resolution = get_screen_resolution()
 
-    if (screen_resolution == (1920, 1080)):
-        # Change to Remote Mode
-        ChangeTo1Monitors()
-        time.sleep(1)
-        changeScale(150)
-        time.sleep(1)
-        change_resolution(1680, 1050)
-        Sound.volume_set(0)
-
-    else:
-        # Change to Desktop Mode
-        ChangeToExtendMonitors()
-        time.sleep(1)
-        changeScale(100)
-        time.sleep(1)
-        change_resolution(1920, 1080)
-        Sound.volume_set(15)
-
-      
-
+    showMenu()
