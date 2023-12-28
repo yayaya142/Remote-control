@@ -35,7 +35,6 @@ class HardwareInput(ctypes.Structure):
         ("wParamH", ctypes.c_ushort)
     ]
 
-
 class MouseInput(ctypes.Structure):
     _fields_ = [
         ("dx", ctypes.c_long),
@@ -430,6 +429,10 @@ def change_resolution(Width, Height):
     devmode.Fields = win32con.DM_PELSWIDTH | win32con.DM_PELSHEIGHT
     win32api.ChangeDisplaySettings(devmode, 0)
 
+def change_resolution_from_settings(settings_mode):
+    Width, Height = load_resolution_settings(settings_mode)
+    change_resolution(Width, Height)    
+
 # endregion Resolution funcs
 
 # region Change monitors funcs
@@ -497,6 +500,12 @@ def changeScale(next_scale):
 
 # region toggle windows taskbar
 
+def select_taskbar_mode(mode):
+    if (mode == True):
+        enable_auto_hide_taskbar()
+    else:
+        disable_auto_hide_taskbar()
+
 
 def enable_auto_hide_taskbar():
     powershell_command = (
@@ -521,7 +530,51 @@ def disable_auto_hide_taskbar():
 
 
 # endregion toggle windows taskbar
+# region import settings
+import json
+def load_settings():
+    with open('settings.json', 'r') as file:
+        settings = json.load(file)
+    return settings
 
+def parse_resolution(resolution_str):
+    try:
+        width, height = map(int, resolution_str.split('x'))
+        return width, height
+    except ValueError:
+        print("Invalid resolution format. Please use 'Width_X_Height'.")
+        return None, None
+
+
+def load_resolution_settings(mode):
+    settings = load_settings()
+    mode_settings = settings.get(mode)
+    resolution = mode_settings.get("resolution")
+    return parse_resolution(resolution)[0], parse_resolution(resolution)[1]
+
+def taskbar_settings(mode):
+    settings = load_settings()
+    mode_settings = settings.get(mode)
+    hide_taskbar = mode_settings.get("hide_taskbar")
+    return hide_taskbar
+
+def volume_settings(mode):
+    settings = load_settings()
+    mode_settings = settings.get(mode)
+    volume = mode_settings.get("volume")
+    return volume
+
+# endregion import settings
+
+def apply_mode_settings(settings_mode):
+    Width, Height = load_resolution_settings(settings_mode)
+    taskbar_bool = taskbar_settings(settings_mode)
+    volume = volume_settings(settings_mode)
+    change_resolution(Width, Height)
+    Sound.volume_set(volume)
+    time.sleep(1)
+    select_taskbar_mode(taskbar_bool)
+    return
 
 # region menu navigation
 def showMenu():
@@ -550,15 +603,15 @@ def showMenu():
         return
     if (userSelect == "6"):
         # Resolution PC
-        change_resolution(1920, 1080)
+        change_resolution_from_settings("pc_mode")
         return
     if (userSelect == "7"):
         # Resolution tablet
-        change_resolution(1680, 1050)
+        change_resolution_from_settings("tablet_mode")
         return
     if (userSelect == "8"):
         # Resolution laptop
-        change_resolution(1366, 768)
+        change_resolution_from_settings("laptop_mode")
         return
 
 
@@ -571,6 +624,7 @@ def printMenu():
     print("6) Resolution PC")
     print("7) Resolution Tablet")
     print("8) Resolution Laptop")
+    
 
 
 def pcMode():
@@ -579,9 +633,8 @@ def pcMode():
     time.sleep(1)
     changeScale(100)
     time.sleep(1)
-    change_resolution(1920, 1080)
-    Sound.volume_set(15)
-    disable_auto_hide_taskbar()
+    apply_mode_settings("pc_mode")
+
 
 
 def tabletMode():
@@ -590,9 +643,7 @@ def tabletMode():
     time.sleep(1)
     changeScale(150)
     time.sleep(1)
-    change_resolution(1680, 1050)
-    Sound.volume_set(0)
-    enable_auto_hide_taskbar()
+    apply_mode_settings("tablet_mode")
 
 
 def laptopMode():
@@ -601,9 +652,8 @@ def laptopMode():
     time.sleep(1)
     changeScale(100)
     time.sleep(1)
-    change_resolution(1366, 768)
-    Sound.volume_set(0)
-    enable_auto_hide_taskbar()
+    apply_mode_settings("laptop_mode")
+
 # endregion menu navigation
 
 
