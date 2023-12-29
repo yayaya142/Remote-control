@@ -2,16 +2,19 @@
     "pc_mode": {
         "resolution": "1920x1080",
         "hide_taskbar": false,
-        "volume": 15
+        "volume": 15,
+        "scale": 100
     },
     "tablet_mode": {
         "resolution": "1680x1050",
         "hide_taskbar": true,
-        "volume": 0
+        "volume": 0,
+        "scale": 150
     },  
     "laptop_mode": {
         "resolution": "1920x1080",
-        "hide_taskbar": true,
-        "volume": 0
+        "hide_taskbar": false,
+        "volume": 0,
+        "scale": 100
     }
 }

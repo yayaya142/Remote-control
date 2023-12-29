@@ -564,12 +564,24 @@ def volume_settings(mode):
     volume = mode_settings.get("volume")
     return volume
 
+def scale_settings(mode):
+    settings = load_settings()
+    mode_settings = settings.get(mode)
+    scale = mode_settings.get("scale")
+    return scale
+
 # endregion import settings
 
 def apply_mode_settings(settings_mode):
+    # get settings from the json file
     Width, Height = load_resolution_settings(settings_mode)
     taskbar_bool = taskbar_settings(settings_mode)
     volume = volume_settings(settings_mode)
+    scale = scale_settings(settings_mode)
+    # apply settings
+    time.sleep(1)
+    changeScale(scale)
+    time.sleep(1)
     change_resolution(Width, Height)
     Sound.volume_set(volume)
     time.sleep(1)
@@ -615,6 +627,7 @@ def showMenu():
         return
 
 
+
 def printMenu():
     print("1) PC mode")
     print("2) Tablet")
@@ -630,9 +643,6 @@ def printMenu():
 def pcMode():
     # Change to Desktop Mode
     ChangeToExtendMonitors()
-    time.sleep(1)
-    changeScale(100)
-    time.sleep(1)
     apply_mode_settings("pc_mode")
 
 
@@ -640,18 +650,12 @@ def pcMode():
 def tabletMode():
     # Change to Remote Mode
     ChangeTo1Monitors()
-    time.sleep(1)
-    changeScale(150)
-    time.sleep(1)
     apply_mode_settings("tablet_mode")
 
 
 def laptopMode():
  # Change to Laptop Mode
     ChangeTo1Monitors()
-    time.sleep(1)
-    changeScale(100)
-    time.sleep(1)
     apply_mode_settings("laptop_mode")
 
 # endregion menu navigation
