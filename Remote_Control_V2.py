@@ -503,9 +503,10 @@ def changeScale(next_scale):
 def select_taskbar_mode(mode):
     if (mode == True):
         enable_auto_hide_taskbar()
-    else:
+    elif(mode == False):
         disable_auto_hide_taskbar()
-
+    else:
+        return
 
 def enable_auto_hide_taskbar():
     powershell_command = (
