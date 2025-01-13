@@ -458,8 +458,12 @@ def ChangeToExtendMonitors():
     time.sleep(1)
     pyautogui.click(1318, 471)
 
+def openDisplaySettings():
+    pyautogui.keyDown('win')
+    pyautogui.press('p')
+    pyautogui.keyUp('win')
 
-# endregion Change monitors funcs
+# endregion Change monitors func
 
 # region Change Scales
 
@@ -492,7 +496,7 @@ def openScaleLayout():
 
 def changeScale(next_scale):
     filePath = [
-        r"D:\softwere\python 3\AA project\AA my project\Remote control\SetDpi.exe", str(next_scale)]
+        r"D:\Code Projects\Python\AA project\AA my project\Remote control\SetDpi.exe", str(next_scale)]
     # Use the subprocess module to run the command
     subprocess.run(filePath)
 
@@ -626,6 +630,9 @@ def showMenu():
         # Resolution laptop
         change_resolution_from_settings("laptop_mode")
         return
+    if (userSelect == "9"):
+        openDisplaySettings()
+        return
 
 
 
@@ -638,6 +645,7 @@ def printMenu():
     print("6) Resolution PC")
     print("7) Resolution Tablet")
     print("8) Resolution Laptop")
+    print("9) Open Display Settings")
     
 
 
