@@ -447,8 +447,10 @@ def ChangeTo1Monitors():
     pyautogui.keyDown('win')
     pyautogui.press('p')
     pyautogui.keyUp('win')
-    time.sleep(1)
-    pyautogui.click(1719, 415)
+    time.sleep(2)
+    pyautogui.click(1640, 110)
+
+
 
 
 def ChangeToExtendMonitors():
